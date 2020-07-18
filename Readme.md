@@ -72,3 +72,43 @@ if cnt > 9:
 # 이렇게 해줘야 최대 결과 값이 10이 나옴
 ```
 
+- 투 포인터 알고리즘 (reference: https://github.com/WooVictory/Ready-For-Tech-Interview/blob/master/Algorithm/%ED%88%AC%ED%8F%AC%EC%9D%B8%ED%84%B0%20%EC%95%8C%EA%B3%A0%EB%A6%AC%EC%A6%98.md)
+
+```python
+# 시도했을 당시 틀렸던 포인트들:
+# 1. 길이가 숫자가 1인 결과를 체크하지못하고 2로 출력하게 했음.
+# 2. 1인 결과는 체크하나 마지막 숫자나 첫번째 숫자가 결과가 1인 최소값을 때를 골라내지 못함.
+# 3. corner case에서 좀 더 디테일한 구현이 필요함.
+
+start, end = 0, 0
+sub_sum = matrix[0]
+result = N+1
+while True:
+    if start == end:
+        # result 가 1이 되어버리면 뒤에것 볼 필요 없음
+        if sub_sum >= S:
+            result = 1
+            break
+        # 둘 다 끝에 도달하면 break
+        if end == N - 1 and start == N - 1:
+            break
+        # 아니라면 end를 한칸 앞으로 보내야 함
+        else:
+            end += 1
+            sub_sum += matrix[end]
+    # 부분합이 기준보다 크면 start를 앞으로 한칸 땡겨주고 부분합에서 전에 값 빼줌
+    elif S <= sub_sum:
+        result = min(result,end-start+1)
+        sub_sum -= matrix[start]
+        start += 1
+    # 부분합이 기준보다 작다면 end를 앞으로 한칸 땡겨주고 부분합에서 나중 값 더해줌
+    else:
+        if end < N-1:
+            end += 1
+            sub_sum += matrix[end]
+        # 만일 end가 N-1에 도착했지만 start는 도달 못했을 경우고 기준 값보다 작다?
+        # start를 끝까지 땡겨줄 필요도 없이 끝내도 됨, 어차피 부분합은 작아지기만 하기때문
+        else:
+            break
+```
+
