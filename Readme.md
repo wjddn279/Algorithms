@@ -112,3 +112,48 @@ while True:
             break
 ```
 
+- 0719 백준 미로탈출하기 
+
+```python
+# point 어차피 방향이 정해져있기 때문에 시작점 찾는 포인트를 한번만 돌아 줘도 상관 없음
+# why? 그때 가면 돌아서 정해질 것이기 때문이다.
+# 어지간한 bfs 문제는 visited를 이용하여 한번만 돌거나 방문했던 지점을 다시 방문하도록 하면 100% 시간초과 남.
+# 어떠한 형태로던지 visited를 만들어 줘야함.
+def search():
+    for i in range(N):
+        for j in range(M):
+            if visited[i][j] == 0:
+                return (i,j)
+    return (-1,-1)   
+result = 0
+while True:
+    x,y = search()
+    if (x,y) == (-1,-1):
+        print(result)
+        break
+    else:
+        result += bfs(x,y)    
+
+# 미로를 탈출하지 못하는 경우는 두가지 경우
+# 1. 돌다가 visited 체크된 경우를 만났을 때 (못가니까 뺑뺑 도는 경우)
+# 2. 이미 못간다고 판명난 길을 가라고 할 때
+
+# 미로를 탈출하는 경우
+# 1. 진짜 밖으로 나감 (iswall = False)
+# 2, 나갈 수 있다고 판명난 길을 가라고 할때
+
+    elif visited[x][y] == 1:
+        # 처음이면
+        if flag:
+            for i,j in step:
+                visited[i][j] = -1
+            return 0
+        else:
+            return cnt
+
+ # 처음일때만 생각해줬는데 그건 아니고 전체의 경우에서 그렇게 해줘야함
+# 즉 1인 경우를 만나더라도 내가 걸어온 길에 포함되면 탈출 못하는 거임
+# 그 중복되는 경우를 해결하는 좋은 방법을 다음에 풀때는 생각해보자.
+# 지금은 step으로 해결했음
+```
+
