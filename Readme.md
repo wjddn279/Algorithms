@@ -191,3 +191,23 @@ else:
 
 ```
 
+- 0728 백준 드래곤커브
+
+```python
+# 기준점 만드는거 좀 잘한듯?
+# critical point -> 지금 시작점이 변경돼서 간 곳이 제일 먼곳이고, 기준점이 된다.
+x_cri,y_cri = step[-1]
+length = len(step)-1
+for st in range(length,-1,-1):
+    # 90도 회전의 의미 -> 원점이 시작점으로 바뀐다고 생각하자.
+	# x,y는 90도 회전 시킬 좌표 x_cri,y_cri는 기준점
+	# x_var, y_var은 각 좌표가 원점에 있을때로 치환한 좌표
+	# 시계 방향으로 90도 회전 -> x에 좌표에 y변화량 더하고 y좌표에 x좌표 뺀다.(일정)
+    x,y = step[st]
+    x_var,y_var = x - x_cri, y - y_cri
+    nx,ny = x_cri+y_var , y_cri-x_var
+    if iswall(nx,ny):
+        matrix[nx][ny] = 1
+        step.append([nx,ny])
+```
+
