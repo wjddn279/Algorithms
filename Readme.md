@@ -211,3 +211,55 @@ for st in range(length,-1,-1):
         step.append([nx,ny])
 ```
 
+- 0731 백준 새로운 게임2
+
+```python
+# 빡구현 문제
+# 오랜만에 풀어서 그런가 체계적으로 접근하지 못함
+# 함수화 해서 푸는게 좋은 것 같음 + 문제 설계를 착실히 해야함
+
+# 함수화 에서는 각각의 경우를 나눠서 풀자
+# 처음에 짠 코드는 엉망이 었다 -> 복잡하더라도 중복된 코드를 최소화 하여 풀어야함
+
+# 생각 -> 하얀색이나 빨간색은 거의 똑같으나 차이는 마지막에 뒤집어 주는 것 
+# moving 을 함수화 하여 중복 최소화
+
+def moving(nx,ny,x,y,idx):
+    # state에서 움직이는데, 움직이는 함수를 어떻게 구현할까?
+    # 하나하나 움직이지말고 단체로 움직이면 됨. 
+    # 어차피 본인보다 위에 있는 애들은 세트로 움직임
+    stack = []
+    for i in range(len(state[x][y])-1,-1,-1):
+        temp = state[x][y].pop()
+        stack.append(temp)
+        data[temp][0],data[temp][1] = nx,ny
+        if temp == idx:
+            break
+    return stack
+
+def go_white(nx,ny,x,y,idx):
+    state[nx][ny] += moving(nx,ny,x,y,idx)[::-1]
+
+def go_red(nx,ny,x,y,idx):
+    state[nx][ny] += moving(nx,ny,x,y,idx)
+ 
+# 파란색이나 벽이나 경우가 똑같으므로 중복 코드 최소화
+# 이 경우 방향 바꿔주고 한번 더해야함 -> 빨간색 하얀색을 함수화 하므로써 중복 최소화.
+# 튕겼을 때 또 튕긴다? -> 방향만 바꿔줌 , 빨간색or하얀색이다? -> 똑같이 처리하고 방향바꿈
+if iswall(nx,ny) == False or matrix[nx][ny] == 2:
+    if d == 1: d = 2
+    elif d == 2: d = 1
+    elif d == 3 : d = 4
+    elif d == 4 : d = 3
+    nx,ny = x+dx[d],y+dy[d]
+    if iswall(nx, ny) == False or matrix[nx][ny] == 2:
+        data[iteration][2] = d
+        nx,ny = x,y
+        elif matrix[nx][ny] == 0:
+            go_white(nx,ny,x,y,iteration)
+            data[iteration][2] = d
+        elif matrix[nx][ny] == 1:
+            go_red(nx,ny,x,y,iteration)
+            data[iteration][2] = d
+```
+
