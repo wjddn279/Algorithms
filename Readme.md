@@ -263,3 +263,48 @@ if iswall(nx,ny) == False or matrix[nx][ny] == 2:
             data[iteration][2] = d
 ```
 
+- 0804 백준 파티
+
+```python
+# 맨 처음 나의 생각 => 다익스트라 알고리즘으로 (start,end)간의 거리를 전부 구해준다.
+# distance 구해 놓은 것들을 버려야 하므로 so bad
+def search(start_point, end_point):
+	# ... #
+    while heap:
+        dis, location = heapq.heappop(heap)
+        if location == end_point:
+            break
+        for arrive, cost in graph[location]:
+            candidate = dis + cost
+            if candidate < distance[arrive]:
+                distance[arrive] = candidate
+                heapq.heappush(heap, (distance[arrive], arrive))
+
+    return distance[end_point]
+
+# 더 좋은 idea => 시작점을 end_point로 하면 배열 distance[i]의 의미는?
+# 도착점에서 i 로 갈때 걸리는 거리.. 즉 올 때의 거리
+# graph를 뒤집어서 저장하면? distance[i]는 i에서 end_point로 가는 거리.
+def search(start_point, graph):
+    # ...
+    while heap:
+        dis, location = heapq.heappop(heap)
+        if distance[location] < dis:
+            continue
+        for arrive, cost in graph[location]:
+            candidate = dis + cost
+            if candidate < distance[arrive]:
+                distance[arrive] = candidate
+                heapq.heappush(heap, (distance[arrive], arrive))
+    return distance
+
+# path는 start에서 end로 갈때의 비용, reverse는 end에서 start 로 갈때의 비용
+for _ in range(M):
+    start, end, cost = map(int,input().split())
+    path[start].append((end,cost))
+    reverse[end].append((start,cost))
+    
+dis = search(end_point,path)
+rev_dis = search(end_point,reverse)
+```
+
