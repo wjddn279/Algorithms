@@ -308,3 +308,61 @@ dis = search(end_point,path)
 rev_dis = search(end_point,reverse)
 ```
 
+- 0805 벽 부수고 이동하기 2
+
+```python
+# 처음 접근
+# 잘못된 점 1. bfs는 cnt가 커지는 순서로 queue에 담긴다. => visited[nx][ny][k] < cnt 는 당연하다.
+# 잘못된 점 2. visited에 거리 체크를 동시에 하면 queue에 cnt를 담을 필요가 없으므로 메모리를 아낄 수 있다.
+visited = [[[-1 for _ in range(K+1)] for _ in range(M)] for _ in range(N)]
+def bfs(x_start,y_start,x_end,y_end):
+    queue = deque()
+    # x위치, y위치, 거리, 벽뚫은 횟수
+    queue.append((x_start,y_start,1,0))
+    visited[x_start][y_start][0] = 1
+    while queue:
+        x,y,cnt,k = queue.popleft()
+        for i in range(4):
+            nx,ny = x+dx[i],y+dy[i]
+            if iswall(nx,ny):
+                # bfs는 어차피 cnt 순서이므로 항상 visited[nx][ny][k] < cnt 이다.
+                if visited[nx][ny][k] == -1 or visited[nx][ny][k] > cnt:
+                    if nx == x_end and ny == y_end:
+                        return cnt+1
+                    if matrix[nx][ny] == 1 and k < K:
+                        queue.append((nx,ny,cnt+1,k+1))
+                        visited[nx][ny][k+1] = cnt+1
+                    elif matrix[nx][ny] == 0:
+                        queue.append((nx,ny,cnt+1,k))
+                        visited[nx][ny][k] = cnt+1
+# 수정된 코드 => 메모리 초과는 안나지만 아슬아슬함. visited 구조가 비 효율적이다.                    
+def bfs(x_start,y_start,x_end,y_end):
+    if x_end == 0 and y_end == 0:
+        return 1
+    queue = deque()
+    # x위치, y위치, 벽뚫은 횟수
+    queue.append((x_start,y_start,0))
+    visited[x_start][y_start][0] = 1
+    while queue:
+        x,y,k = queue.popleft()
+        for i in range(4):
+            nx,ny = x+dx[i],y+dy[i]
+            if iswall(nx,ny):
+                if visited[nx][ny][k] == -1:
+                    if nx == x_end and ny == y_end:
+                        return visited[x][y][k]+1
+                    if matrix[nx][ny] == 1 and k < K:
+                        queue.append((nx,ny,k+1))
+                        # visited에 바로 거리 체크
+                        visited[nx][ny][k+1] = visited[x][y][k]+1
+                    elif matrix[nx][ny] == 0:
+                        queue.append((nx,ny,k))
+                        visited[nx][ny][k] = visited[x][y][k]+1
+                        
+# 비트 마스킹을 활용하면 N X M X K 만큼의 visited 메모리를 N X M 만큼만 사용하면 된다.
+# K 만큼 벽 뚫은 것 visited 검사
+if visited[nx][ny] & (1<<k):
+# K 만큼 벽 뚫은 것 visited 입력
+visited[nx][ny] = visited[nx][ny] | (1<<k)
+```
+
