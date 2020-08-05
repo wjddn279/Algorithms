@@ -360,9 +360,48 @@ def bfs(x_start,y_start,x_end,y_end):
                         visited[nx][ny][k] = visited[x][y][k]+1
                         
 # 비트 마스킹을 활용하면 N X M X K 만큼의 visited 메모리를 N X M 만큼만 사용하면 된다.
+# 비트 마스킹 활용? => 각 상태별 visited 체크만 할 때, 즉 상태별 최단 거리를 구할 때.
 # K 만큼 벽 뚫은 것 visited 검사
 if visited[nx][ny] & (1<<k):
 # K 만큼 벽 뚫은 것 visited 입력
 visited[nx][ny] = visited[nx][ny] | (1<<k)
+```
+
+- 0805 군대 탈출 (good)
+
+```python
+# 구현 아이디어 : visited로 통과 했을 때의 최소값과 통과 하지 않았을 때의 최소값 구하기
+# 벽 부수고 이동하기 2와 다른점은? => 벽 부수고 이동하기 2는 구하고자 하는 값이 거리
+# 어차피 거리기 때문에 처음 만나는 값이 곧 최소값
+# 하지만 군대 탈출은 거리가 아닌 다른 value 이므로 체크만 하는 것이 아닌 최소값 저장하고
+# 그보다 작은 값만 체크해야함
+
+# 틀린 점 : 
+visited = [[[987654321,987654321] for _ in range(M)] for _ in range(N)]
+# 각 값 k 가 0 <= k <= 10^9 이었는데, 987654321 보다 10^9 이 커서 정답이 안나오는 경우가 있었음. 값을 체크 하거나 아예 float('INF')로 해도 좋음
+visited = [[[9876543210,9876543210] for _ in range(M)] for _ in range(N)]
+
+# 핵심 로직
+while queue:
+    # x 위치, y 위치, 지나온 경로 중 최대값, 통과 여부
+    x,y,val,k = queue.popleft()
+    for i in range(4):
+        nx,ny = x+dx[i],y+dy[i]
+        if iswall(nx,ny):
+            # 이때까지의 최대값과 새로 간 곳의 값 비교해서 최대값 갱신
+            temp = max(val,matrix[nx][ny])
+            # 그 최대값이 이전에 방문했던 경로의 최대값보다 크면 cut
+            if visited[nx][ny][k] > temp:
+                queue.append((nx,ny,temp,k))
+                visited[nx][ny][k] = temp
+            # 통과 해보지 못했으면 왔던 방향으로 통과해보고 과거의 값보다 크면 cut
+            # 처음에는 visited[nx][ny][k] > temp 여야만 이 분기를 검사했는데,
+            # 그러면 틀림 why? visited[nx][ny][k] > temp를 성립하지 않아도 건너뛰어서 최소값이 될수 있기 때문
+            if k == 0:
+                nnx,nny = nx+dx[i],ny+dy[i]
+                if iswall(nnx,nny):
+                    temp = max(val,matrix[nnx][nny])
+                    if visited[nnx][nny][1] > temp:                            				                                         queue.append((nnx,nny,temp,1))
+                        visited[nnx][nny][1] = temp
 ```
 
