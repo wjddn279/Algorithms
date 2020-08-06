@@ -31,7 +31,9 @@ for _ in range(V+1):
     min_node = 0
     for i in range(1,V+1):
         if distance[i] < min_value and not visited[i]:
-            min_value
+            min_value = distance[i]
+            min_node = i
+    visited[i] = 1
 ```
 
 3. 선택된 정점에서 갈 수 있는 각 다음 정점들에 대해 
@@ -42,52 +44,74 @@ for _ in range(V+1):
    중 가까운 거리로 최단거리를 갱신한다.
 
 ```python
-
+	for arrive,cost in data[min_node]:
+        distance[arrive] = min(distance[arrive],min_value+cost)
 ```
 
 
 
+- 일반 다익스트라 알고리즘
+
 ```python
-def dji(min_node):
-    visited = [0 for _ in range(V + 1)]
-    visited[0] = 1
+V, E = map(int,input().split())
+data = [[] for _ in range(V+1)]
+for _ in range(E):
+    start,end,cost = map(int,input().split())
+    data[start].append((end,cost))
+start_point = int(input())
 
-    distance = [float('inf') for _ in range(V + 1)]
-    distance[min_node] = 0
+distance = [float('INF') for _ in range(V+1)]
+visited = [0 for _ in range(V+1)]
 
-    while True:
-        for arrive, cost in data[min_node]:
-            if visited[arrive] == 0:
-                via = distance[min_node] + cost
-                if via < distance[arrive]:
-                    distance[arrive] = via
+distance[start_point] = 0
 
-        visited[min_node] = 1
-        min_value = float('inf')
+for _ in range(V+1):
+    min_value = float('INF')
+    min_node = 0
+    for i in range(1,V+1):
+        if not visited[i] and distance[i] < min_value:
+            min_value = distance[i]
+            min_node = i
+            
+	visited[min_node] = 1
+    
+    for arrive,cost in data[min_node]:
+        distance[arrive] = min(distance[arrive], distance[min_node]+cost)
 
-        for i in range(1, V + 1):
-            if distance[i] < min_value and visited[i] == 0:
-                min_value = distance[i]
-                min_node = i
+print(distance)
+```
 
-        if visited[min_node]:
-            return distance
+- heap을 활용한 다익스트라
+
+```python
+import heapq
 
 V, E = map(int,input().split())
-min_node = int(input())
-
 data = [[] for _ in range(V+1)]
-for i in range(E):
-    a,b,c = map(int,input().split())
-    data[a].append((b,c))
+for _ in range(E):
+    start,end,cost = map(int,input().split())
+    data[start].append((end,cost))
+    
+start_point = int(input())
 
-distance = dji(min_node)
+distance = [float('INF') for _ in range(V+1)]
+visited = [0 for _ in range(V+1)]
 
-for i in range(1,len(distance)):
-    if distance[i] == float('inf'):
-        print("INF")
-    else:
-        print(distance[i])
+distance[start_point] = 0
 
+heap = []
+heapq.heappush(heap,(0,start_point))
+
+while heap:
+    # heap 중 dis가 가장 작은 dis, location이 pop 됨
+    # dis : start_point에서 location까지 현재 최단 거리
+    dis, location = heapq.heappop(heap)
+    if location == end_point:
+        break
+    for arrive, cost in data[location]:
+        candidate = dis + cost
+        if candidate < distance[arrive]:
+            distance[arrive] = candidate
+            heapq.heappush(heap,(distance[arrive],arrive))
 ```
 
