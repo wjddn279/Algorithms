@@ -416,3 +416,69 @@ while queue:
 # 4. 불 먼저 옮기고 사람 옮기는데, cnt가 바뀌면 불을 옮겨야 한다. 그럼 처음 시작할 때 cnt = 0 일 때부터 불을 옮겨야 함.
 ```
 
+- 0808 낚시왕
+
+```python
+# 처음 구현 했을 때 시간이 많이 걸린 이유?
+# 추측 => 행렬을 계속 복사해서 그럴것이다.
+    new = [[[0,0,0] for _ in range(C)] for _ in range(R)]
+    for i in range(R):
+        for j in range(C):
+            if matrix[i][j][2] != 0:
+                s,d,z = matrix[i][j]
+                sharkmoving(i,j,s,d,z)
+    matrix = new
+    
+# 행렬 복사 없이 하는 아이디어 구상 => 기존 matrix 행렬을 변형
+# 행렬 복사하는 이유는 움직인 물고기와 움직여야 할 물고기를 구분하기 위함.
+# matrix를 2개로 쪼개서 col이 짝수 일때는 짝수 출발 홀수 도착, 그 반대는 반대로 함
+# 하지만 별 시간 차이 없음
+matrix = [[[[0,0,0],[0,0,0]] for _ in range(C)] for _ in range(R)]
+for col in range(C):
+    result = fishing(col,result,col)
+    for i in range(R):
+        for j in range(C):
+            if matrix[i][j][col%2][2] != 0:
+                s,d,z = matrix[i][j][col%2]
+                sharkmoving(i,j,s,d,z,col)
+# 원인: 벽에 맞는 것 체크하기 위해 s만큼 for문 돌려 일일히 체크 해줌 -> 시간 걸림
+# for문의 횟수를 줄여야함
+def sharkmoving(x,y,s,d,z,col):
+    matrix[x][y][col%2] = [0,0,0]
+    for i in range(s):
+        nx,ny = x + dx[d], y+dy[d]
+        if not iswall(nx,ny):
+            if d== 1: d=2
+            elif d==2: d=1
+            elif d==3: d=4
+            elif d==4: d=3
+            nx,ny = x + dx[d],y + dy[d]
+        x,y = nx,ny
+    if matrix[x][y][(col+1)%2][2] < z:
+        matrix[x][y][(col+1)%2][0],matrix[x][y][(col+1)%2][1],matrix[x]
+
+# s만큼 돌지 말고 수식적으로 계산해야 함
+def sharkmoving(x,y,s,d,z):
+    matrix[x][y] = [0,0,0]
+    s_start = s
+    while True:
+        nx,ny = x + s * dx[d], y+ s * dy[d]
+        if nx < 0:
+            s = s-x
+            x, d = 0,2
+        elif nx >= R:
+            s = s-(R-1-x)
+            x, d = R-1,1
+        elif ny < 0:
+            s = s -y
+            y, d = 0,3
+        elif ny >= C:
+            s = s-(C-1-y)
+            y, d = C-1,4
+        else:
+            break
+    if new[nx][ny][2] < z:
+        # s_start의 의미? => 방향은 벽에 부딪히면 바뀌지만 s는 처음 값이 들어가야함
+        new[nx][ny][0],new[nx][ny][1],new[nx][ny][2] = s_start,d,z
+```
+
