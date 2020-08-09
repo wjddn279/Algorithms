@@ -482,3 +482,95 @@ def sharkmoving(x,y,s,d,z):
         new[nx][ny][0],new[nx][ny][1],new[nx][ny][2] = s_start,d,z
 ```
 
+- 0809 백준 컵라면
+
+```python
+# greedy 알고리즘 -> 필요한 것만 계산하면 된다. 필요한 것과 없는 것을 구분하자.
+# 대부분은 시작 부터 끝 까지 계산하는 것이 아닌, 끝에서 시작점을 찾아가는 경로를 구한다.
+# 시작점부터 하나하나 계산하면 100% 시간초과. 필요한 것만 수식적으로 계산해야함.
+
+# 이 문제에서 필요한 것? -> 최대 컵라면 수 만 알면 된다.
+# 필요없는 것? -> 몇 번째 순서에 뭐를 풀었는지는 중요하지 않다!
+
+# 설계 -> 각 데드라인 까지의 해야 하는 일을 모은다.
+data = [[] for _ in range(N+1)]
+for i in range(N):
+    a,b = map(int,input().split())
+    data[a].append(b)
+# 그 다음 각 데드라인 별로 컵라면 갯수에 따라 정렬한다.
+for i in range(N):
+    if len(data[i]):
+        data[i].sort(reverse=True)
+# 각 데드라인 별로 가장 큰 것을 저장하고 그 다음 숫자부터 지금 값의 최소값을 넣는다.
+# 만일 데드라인 까지 해야 하는 일이 없다면 뒤에 나올 데드라인 중 가장 큰 값을 넣기 위해 0을 넣는다.
+heap = []
+heapq.heapify(heap)
+for i in range(1,N+1):
+    if len(data[i]) != 0:
+        # 제일 큰 거 추가하고
+        heapq.heappush(heap,data[i][0])
+        # 그다음꺼 부터 도는데, 지금 있는 것 중에 가장 작은 거 보다 다음께
+        for j in range(1,len(data[i])):
+            temp = heapq.heappop(heap)
+            # 크다? 그럼 다시 넣고 끝
+            if temp > data[i][j]:
+                heapq.heappush(heap,temp)
+                break
+            # 아니다? 그럼 데이터를 넣고 다시
+            else:
+                heapq.heappush(heap,data[i][j])
+    else:
+        heapq.heappush(heap,0)
+        
+# 가장 greedy 같이 푼 코드
+
+pq = []
+result = 0
+# greedy 답게 데드라인의 역순부터 시작한다.
+# 쉽게 생각하면 데드라인 역순부터 돌면서 모든 후보를 집어 넣는다 
+# -> 역순부터 하기 때문에 못하는 건 들어가 있지 않다.
+# -> 이 데드라인때 할 수 있는 모든 일의 요소 이다. 그중 최대값 뽑아서 result에 더함
+for i in range(max_dead, 0, -1):
+    
+    for j in dead_list[i]:
+        heapq.heappush(pq, -j)
+    if pq:
+        result -= heapq.heappop(pq)
+
+```
+
+- 0809 백준 계산기 (다시 풀어보자)
+
+```python
+# 역시 greedy 문제
+# 1. 구할 것을 정확하게 파악한다. 
+# -> 연산 순서.
+# 2. 역순부터 시작한다.
+# -> 0부터 하면 헷갈린다. N 부터 숫자를 줄여나가야 한다.
+# 3. 필요한 것만 수식적으로 계산해야 한다.(for문으로 탐색형식하면 터짐)
+# -> 모든 경우의 수를 직접 돌리면 시간초과 난다. 필요한 연산만 해서 가짓수를 줄여야한다.
+
+N = int(input())
+result = []
+# 100000 꼴로 만들어 줘야 함.
+while True:
+    # N & 1 = 1 : 끝자리가 1이다 -> 홀수다 못만들기 때문에 *2
+    if N & 1:
+        result += ['[/]']
+        N = N * 2
+    # N & 2 = 1: 뒤에서 두번째 자리가 1이다 -> 없애 준다.
+    elif N & 2:
+        result += ['[+]']
+        N = N -2
+    # N = N //2 를 이진수 측면에서 보면 맨 뒷자리를 없애준다.
+    # 하지만 N이 짝수 일때만 만족하는 경우다.
+    else:
+        result = result + ['[*]']
+        N = N //2
+    if N == 0:
+        break
+
+print(len(result))
+print(*result[::-1])
+```
+
