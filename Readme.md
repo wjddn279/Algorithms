@@ -604,3 +604,75 @@ print(*result[::-1])
 # visited는 비트마스킹 필요없는 이유 -> 어차피 갈수있나 없나만 보는건데 뭐. 경로가 중요한게 아니잖아.
 ```
 
+- 0816 컬러볼
+
+```python
+# idea -> brute force( 완전 탐색 )
+# 공하나씩 돌면서 자기보다 큰 경우를 전부 센다.
+# 시간 복잡도 O(n^2) 이므로 불가능 -> log(n) 이나 nlog(n)의 방법을 찾아야 한다.
+
+# 첫번째 idea -> 정렬 후 숫자가 낮은 것 부터 본다.
+# 낮은 것부터 보면서 그때까지의 전체 합을 구하고 본인의 색깔을 뺀다.
+# 유의할 점 -> 크기가 같은 공들을 처리해 줘야함
+N = int(input())
+data = []
+for i in range(N):
+    color,size = map(int,input().split())
+    data.append([size,color,i])
+result = [0 for _ in range(N)]
+# 색깔 별 크기 합 저장
+color_sum = [0 for _ in range(N+1)]
+# 볼의 크기를 기준으로 정렬
+data.sort()
+total_sum, now = 0, 0
+for size,color,idx in data:
+   	# 같은 크기의 볼들을 처리하기 위한 알고리즘
+    if now == size:
+        # temp를 dictionary로 정의하는 이유? 
+        # dictionary 의 in 함수는 시간복잡도 O(1) 이다.
+        if color in temp:
+            result[idx] = val - temp[color]
+        else:
+            result[idx] = val - color_sum[color]
+            temp[color] = color_sum[color]
+    # 같지 않고 다음으로 넘어가면 바뀜
+    else:
+        # 인덱스의 값은 이때까지 지나온 모든 공의 크기 합 - 내가 속한 볼의 크기 합
+        temp = {color:color_sum[color]}
+        result[idx] = total_sum - color_sum[color]
+        now, val = size, total_sum
+    color_sum[color] += size
+    total_sum += size
+
+for num in result:
+    print(num)
+       
+# 더 좋은 idea -> 굳이 sort를 해야하나?
+# 공의 최대 값이 정해져 있다 -> 입력 받을 때 부터 정해진 위치에 넣으면 알아서 정렬됨
+
+N = int(input())
+# 공의 크기 순으로 모아둠
+data = [[] for _ in range(2001)]
+for i in range(N):
+    color,size = map(int,input().split())
+    data[size].append((color,i))
+result = [0 for _ in range(N)]
+color_sum = [0 for _ in range(N+1)]
+total_sum = 0
+for size,arr in enumerate(data):
+    temp,temp_size = {},0
+    # 각 크기마다 공을 꺼냄 (자동으로 크기 순으로 꺼내짐)
+    for color,idx in arr:
+        if color in temp:
+            result[idx] = total_sum - temp[color]
+        else:
+            result[idx] = total_sum - color_sum[color]
+            temp[color] = color_sum[color]
+        color_sum[color] += size
+        temp_size += size
+    total_sum += temp_size
+
+for num in result:
+    print(num)
+```
+
