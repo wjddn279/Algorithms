@@ -676,3 +676,55 @@ for num in result:
     print(num)
 ```
 
+- 0820 색종이 붙이기
+
+```python
+# 처음 접근 -> 그냥 순서대로 지우기.
+# 경우의 수를 따질 수 없다. 최적의 해도 존재 하지 않으므로 Brute Force
+# 어떨때 Brute Force? -> 무엇이 최적의 해 인지 끝까지 해봐야 아는 경우.
+# 예를 들면 지금 최선의 경우를 골랐다 하더라고 마지막 까지 갔을 때 그것이 최선이라는
+# 보장이 없다. 그 순간 최적을 고르면 -> Greedy Algorithm
+
+# 문제 푸는 방법 -> 하나씩 해봐야 한다. (재귀로)
+def solve(matrix,frequency):
+    if sum(frequency) >= result[0]:
+        return
+    for i in range(10):
+        for j in range(10):
+            if matrix[i][j] == 1:
+                # 크기가 5인 것 부터 체크해서 되면 출발
+                # dfs의 원리, 맨 처음 5부터 출발해서 끝까지 가보고 아니면 돌아옴
+                # 만일 처음이 5가 아니라면 그 뒤도 전부 아니므로 가지치기
+                for k in range(5,0,-1):
+                if i < 11-k and j < 11-k and frequency[k] < 5:
+                        if Check(i, j, 5 ,matrix):
+                            Make(i, j, 5, matrix)
+                            frequency[5] += 1
+                            solve(deepcopy(matrix),frequency[:])
+                            frequency[5] -= 1
+                            Reverse(i, j, 5, matrix)
+                # 경우의 수 다 해보고 이 가지는 return
+                # 만일 위의 for문에서 걸렸다면 다음 가지로 갔을 것이고
+                # 못갔다면 더 이상 유망하지 못한 가지.
+                return
+    result[0] = min(result[0],sum(frequency))
+    
+    
+# 처음 접근 시 시간 초과 이유.
+# 1. 현재 result 보다 현 상태가 크면 return (가지치기) 해야 함.
+if sum(frequency) >= result[0]:
+    return
+
+# 2. deepcopy가 필요없음
+if i < 11-k and j < 11-k and frequency[k] < 5:
+    if Check(i, j, 5 ,matrix):
+        Make(i, j, 5, matrix)
+        frequency[5] += 1
+        # 어차피 그 당시의 matrix상태로 끝까지 가기 때문에 deepcopy를 해서 
+        # 넘겨줄 필요가 없음
+        # 재귀로 permutation 만드는 원리를 상기 시켜보기 바람.
+        solve()
+        frequency[5] -= 1
+        Reverse(i, j, 5, matrix)
+```
+
