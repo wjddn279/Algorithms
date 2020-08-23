@@ -728,3 +728,124 @@ if i < 11-k and j < 11-k and frequency[k] < 5:
         Reverse(i, j, 5, matrix)
 ```
 
+- 0822 일요일 아침의 데이트
+
+```python
+# 생각은 빠르게 했으나 구현 과정에서 디테일이 부족해서 시간을 낭비함
+def bfs(x,y):
+    queue = deque()
+    queue.append((x,y,[0,0]))
+    visited[x][y] = [0,0]
+    while queue:
+        x, y, step = queue.popleft()
+        for i in range(4):
+            nx,ny = x+dx[i],y+dy[i]
+            if iswall(nx,ny):
+                temp = step[:]
+                # 이전의 조건으로 먼저 검사하고 그 뒤의 temp 변경 -> 일관적으로 검사되지 못함
+                # 왜? 이전에는 조건에 맞았는데 바뀌고 나면 조건에 안맞으고 실질적으로 들어가는 것은 조건에 안맞는 것들
+                # 따라서 변경된 값으로 조건 검사를 하고 맞으면 추가 이런식으로 해야함
+                if visited[nx][ny][0] > step[0] or (visited[nx][ny][0] == step[0] and visited[nx][ny][1] > step[1]):
+                    if matrix[nx][ny] == 'F':
+                        visited[nx][ny] = temp
+                        continue
+                    elif matrix[nx][ny] == 'a':
+                        temp[1] += 1
+                    elif matrix[nx][ny] == 'g':
+                        temp[0] += 1
+                    queue.append((nx, ny, temp))
+                    visited[nx][ny] = temp
+                    
+# 무엇이 틀렸을까? -> 'a'를 지나는 경우와 'g'를 지나는 경우, 일반을 지나는 경우 모두 visited가 갱신되는 조건이 다르다
+# if visited[nx][ny][0] > step[0] or (visited[nx][ny][0] == step[0] and visited[nx][ny][1] > step[1]):
+# 이렇게 통일된 조건을 검사하고 통과하면 temp가 +1 이런식으로 되는데, 그렇게 되면 제대로 visited가 체크되지 않는다
+
+def bfs(x,y):
+    queue = deque()
+    queue.append((x,y,[0,0]))
+    visited[x][y] = [0,0]
+    while queue:
+        x, y, step = queue.popleft()
+        for i in range(4):
+            nx,ny = x+dx[i],y+dy[i]
+            if iswall(nx,ny):
+                temp = step[:]
+                if matrix[nx][ny] == 'F':
+                    if visited[nx][ny][0] > step[0] or (visited[nx][ny][0] == step[0] and visited[nx][ny][1] > step[1]):
+                        visited[nx][ny] = temp
+                        continue
+                # 조건에 의해 먼저 변경하고
+                elif matrix[nx][ny] == 'a':
+                        temp[1] += 1
+                elif matrix[nx][ny] == 'g':
+                        temp[0] += 1
+                # 그 변경된 값으로 조건 검사 해서 맞으면 추가
+                if visited[nx][ny][0] > temp[0] or (visited[nx][ny][0] == temp[0] and visited[nx][ny][1] > temp[1]):
+                    queue.append((nx, ny, temp))
+                    visited[nx][ny] = temp
+                    
+# 항상 조건 검사할때 변경사항이 있다면 변경 -> 조건 검사 후 vistited 와 queue/stack 변경 이순서!!!
+# 즉 다시말해 변경된 조건으로 체크를 해야 한다면, 먼저 변경을 해본 후 조건 검사 해야 한다.
+```
+
+
+
+- 0823 피리부는 사나이
+
+```python
+# 처음 접근 -> 그냥 하나씩 돌아서 되는 자기들 끼리 도는 것 만큼 숫자 올려줌 (오답)
+# 왜냐? 출발점에서 안 이어지지만 뒤에서 이어지는 경우가 있음
+def bfs(x,y,cnt):
+    queue = deque()
+    queue.append((x,y,[[x,y]]))
+    visited[x][y] = cnt
+    while queue:
+        x,y,step = queue.popleft()
+        dx,dy = direction[matrix[x][y]]
+        nx,ny = x+dx, y+dy
+        # 안들린 점이 있으면 내걸로 만들고
+        if visited[nx][ny] == 0:
+            queue.append((nx,ny,step+[[nx,ny]]))
+            visited[nx][ny] = cnt
+        # 내 점이랑 이어지네? -> circular 하다는 거니까 내 영토
+        elif visited[nx][ny] == visited[x][y]:
+            result[0] += 1
+            return cnt+1
+        # 다른 점이랑 만났네? -> 나는 그 영토에 소속이었네
+        elif visited[nx][ny] != visited[x][y]:
+            temp = visited[nx][ny]
+            for x1,y1 in step:
+                visited[x1][y1] = temp
+            return cnt+1
+
+    return cnt+1
+
+# 더 좋은 방법을 생각해야 한다. -> step으로 꼭 visited를 일일히 바꿔줄 필요가 있을까?
+# 정확한 visited가 연결되는 것을 원하는게 아니라 몇개가 연결되어 있는지만 알면 되는데?
+# cnt가 점점 커지는 구조이므로 visited[nx][ny] < visited[x][y] 이면 다른 graph와 만나는 것임을 알수 있다.
+# 따라서 visited를 정확하게 맞춰주지 않아도 경로의 갯수를 구할 수 있음
+
+def bfs(x,y,cnt):
+    queue = deque()
+    queue.append((x,y))
+    visited[x][y] = cnt
+    while queue:
+        x,y = queue.popleft()
+        dx,dy = direction[matrix[x][y]]
+        nx,ny = x+dx, y+dy
+        # 안들린 점이 있으면 내걸로 만들고
+        if visited[nx][ny] == 0:
+            queue.append((nx,ny))
+            visited[nx][ny] = cnt
+        # 내 점이랑 이어지네? -> circular 하다는 거니까 내 영토
+        elif visited[nx][ny] == visited[x][y]:
+            result[0] += 1
+            return cnt+1
+        # 다른 점이랑 만났네? -> 나는 그 영토에 소속이었네
+        elif visited[nx][ny] < visited[x][y]:
+            return cnt+1
+
+    return cnt+1
+
+```
+
