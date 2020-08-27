@@ -849,3 +849,52 @@ def bfs(x,y,cnt):
 
 ```
 
+- 0827 프로그래머스 단어 변환
+
+```python
+# 모든 테스트 케이스가 잘 안된다? -> 무조건 끝쪽을 생각해야 한다.
+# 안될때 반드시 체크 해야 할 점.
+# 1. 0일때 잘 나오느냐
+# 2. 0을 제외한 첫 번째 수가 잘 나오느냐
+# 3. 마지막 케이스가 잘 들어가느냐
+
+# 대부분의 케이스는 queue에 담을때와 나올때가 문제다.
+# while queue 하기 위해 처음에 queue를 담는데, 그때 끝나버릴수도 있다.
+# 그래서 queue에 담을 때도 체크를 해줘야 한다.
+# 그리고 보통 queue 안에서 return 할때가 아닌 끝나고 결과 보고 return 하는 경우가
+# 있는데 그때도 한번 더 체크해주고 return 해야 한다.
+from _collections import deque
+
+def solution(begin, target, words):
+    queue = deque()
+    for word in words:
+        if isword(begin,word):
+            # 이걸 고려안해서 틀림
+            # while queue 돌기 전에 끝나는 경우 ( 0을 제외한 첫 번째 수)
+            # 이걸 항상 고려해 줘야 한다.
+            if word == target:
+                return 1
+            else:
+                queue.append((word,[word]))
+    while queue:
+        print(queue)
+        now , step = queue.popleft()
+        for word in words:
+            if word not in step and isword(now,word):
+                if word == target:
+                    return len(step)+1
+                else:
+                    queue.append((word,step+[word]))
+    return 0
+
+def isword(now,word):
+    cnt = 0
+    for idx,alpha in enumerate(word):
+        if alpha != now[idx]:
+            cnt += 1
+    if cnt == 1:
+        return True
+    else:
+        return False
+```
+
