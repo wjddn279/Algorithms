@@ -12,8 +12,6 @@ def solution(lines):
         stack.append(float(temp))
         data.append(stack)
 
-    print(data)
-
     return answer
 
 print(solution([
