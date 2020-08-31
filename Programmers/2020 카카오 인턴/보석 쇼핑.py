@@ -1,7 +1,6 @@
 def solution(gems):
     min_length = float('inf')
     answer,dic = [1,1],{}
-    flag = False
     total = len(gems)
     # 같으면 시작 구간이 작은 진열대 번호 부터
     for gem in gems:
@@ -10,7 +9,7 @@ def solution(gems):
     left,right = 0 ,0
     dic[gems[0]] = 1
     temp = [gems[0]]
-    while len(dic) != 1 and left < total-1:
+    while right < total-1 and left < total-1:
         if right == total -1:
             if len(temp) == len(dic) and (right - left) < min_length:
                 answer = [left + 1, right + 1]

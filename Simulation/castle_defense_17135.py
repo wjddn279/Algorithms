@@ -1,5 +1,5 @@
 import sys
-sys.stdin = open("input.txt")
+sys.stdin = open("../input.txt")
 
 def prin(a):
     for i in a:
