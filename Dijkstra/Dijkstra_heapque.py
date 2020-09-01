@@ -15,7 +15,6 @@ for test_case in range(1,T+1):
 
     heap = []
     heapq.heappush(heap,(0,0))
-
     while heap:
         dis, location = heapq.heappop(heap)
         if location == V:
