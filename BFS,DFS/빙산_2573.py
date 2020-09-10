@@ -9,7 +9,7 @@ def prin(a):
 from _collections import deque
 
 def iswall(x,y):
-    if x < 0 or y < 0: return False8t
+    if x < 0 or y < 0: return False
     elif x >= N or y >= M: return False
     else: return True
 
