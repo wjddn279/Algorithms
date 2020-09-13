@@ -898,3 +898,87 @@ def isword(now,word):
         return False
 ```
 
+- 0911 모래성 (very good)
+
+```python
+# N = 1000 이기 때문에 왠만하면 N * N 으로 한번 돌아야함.
+# 무조건 bfs 1번으로 문제를 풀어야 한다는 의미.
+
+# 어떻게든 bfs 한번으로 돌아서 풀수 있으니까 그렇게 풀려는 아이디어를 내야한다.
+
+# 안풀릴때는 무조건 반대로 생각해 봐야한다.
+
+# 1. 0에서 더하는 거 대신 전체에서 빼는거
+# 2. 모래의 시점이 아닌 물의 시점에서 보는 것
+
+# 맨 처음 코드
+
+# queue의 단계를 나눠서 푸는 문제
+# 어차피 queue가 담기는게 있고 없으면 return
+
+from _collections import deque
+
+def iswall(x,y):
+    if x < 0 or y < 0 : return False
+    elif x >= N or y >= M : return False
+    else: return True
+
+def init():
+    queue,next = deque(), deque()
+    for i in range(N):
+        for j in range(M):
+            if matrix[i][j] == 0 and not visited[i][j]:
+                queue.append((i,j))
+                visited[i][j] = 1
+                while queue:
+                    x,y = queue.popleft()
+                    for k in range(8):
+                        nx,ny = x+dx[k],y+dy[k]
+                        if iswall(nx,ny):
+                            if matrix[nx][ny] != 0:
+                                matrix[nx][ny] -= 1
+                                if matrix[nx][ny] == 0:
+                                    next.append((nx,ny))
+                                    visited[nx][ny] = 1
+                            elif not visited[nx][ny]:
+                                queue.append((nx,ny))
+                                visited[nx][ny] = 1
+    return next
+
+def solve(queue):
+    next = deque()
+    while queue:
+        x, y = queue.popleft()
+        for k in range(8):
+            nx, ny = x + dx[k], y + dy[k]
+            if iswall(nx, ny):
+                if matrix[nx][ny] != 0:
+                    matrix[nx][ny] -= 1
+                    if matrix[nx][ny] == 0:
+                        next.append((nx, ny))
+                        visited[nx][ny] = 1
+    return next
+global N,M
+N, M = map(int,input().split())
+# 1~9의 숫자 혹은 '.' 빈 모래
+matrix = []
+for i in range(N):
+    temp = list(input())
+    for j in range(M):
+        if temp[j] == '.':
+            temp[j] = 0
+        else:
+            temp[j] = int(temp[j])
+    matrix.append(temp)
+visited = [[0 for _ in range(M)] for _ in range(N)]
+# 시계 방향으로 돌자
+dx = [-1,-1,0,1,1,1,0,-1]
+dy = [0,1,1,1,0,-1,-1,-1]
+next = init()
+result = 0
+while next:
+    result += 1
+    next = solve(next)
+print(result)
+```
+
