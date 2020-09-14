@@ -1,5 +1,5 @@
 from _collections import deque
-
+import random
 def solution(ball, order):
     answer,wait = [], {}
     ball = deque(ball)
@@ -20,4 +20,9 @@ def solution(ball, order):
                 answer.append(ball.popleft())
     return answer
 
-print(solution([1, 2, 3, 4, 5, 6],[6, 2, 5, 1, 4, 3]))
+a = list(range(1,1000000))
+b = list(range(1,1000000))
+random.shuffle(a)
+random.shuffle(b)
+
+print(solution(a,b))
