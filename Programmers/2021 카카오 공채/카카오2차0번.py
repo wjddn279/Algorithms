@@ -144,3 +144,6 @@ print(act)
 # cmd = [{'elevator_id': 0, 'command': 'UP'},{'elevator_id': 1, 'command': 'UP'}]
 # act = action('kqBeE',cmd)
 # pprint(act)
+
+
+
