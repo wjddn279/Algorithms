@@ -38,7 +38,7 @@ def bfs(x,y):
             if iswall(nx,ny) and visited[nx][ny][key] == 0:
                 if matrix[nx][ny] == '1':
                     return cnt+1
-                elif matrix[nx][ny] == '.' :
+                elif matrix[nx][ny] == '.':
                     queue.append((nx,ny,key,cnt+1))
                     visited[nx][ny][key] = 1
                 else:
