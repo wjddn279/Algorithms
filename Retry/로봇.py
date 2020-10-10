@@ -22,16 +22,19 @@ def dir_change(d):
 
 def bfs(x,y,d,ex,ey,ed):
     queue = deque()
-    queue.append((x,y,d,0))
+    queue.append((x,y,d,1))
     visited[x][y][d] = 1
     while queue:
-        print(queue)
         x,y,d,c = queue.popleft()
         # 방향 그대로 가기
-        nx,ny = x+dx[d],y+dy[d]
-        if iswall(nx,ny) and not visited[nx][ny][d]:
-            queue.append((nx,ny,d,c+1))
-            visited[nx][ny][d] = c+1
+        for k in range(1,4):
+            nx,ny = x+k*dx[d],y+k*dy[d]
+            if iswall(nx,ny):
+                if not visited[nx][ny][d]:
+                    queue.append((nx,ny,d,c+1))
+                    visited[nx][ny][d] = c+1
+            else:
+                break
         # 우로 회전
         nd = (d+1)%4
         if not visited[x][y][nd]:
@@ -43,7 +46,7 @@ def bfs(x,y,d,ex,ey,ed):
             visited[x][y][nd] = c+1
 
         if visited[ex][ey][ed]:
-            return c+1
+            return visited[ex][ey][ed]-1
 
 
 global N,M
@@ -58,6 +61,5 @@ sd,ed = dir_change(sd),dir_change(ed)
 # 동 북 서 남
 dx = [0,-1,0,1]
 dy = [1,0,-1,0]
-visited = [[[0,0,0,0,0] for _ in range(M)] for _ in range(N)]
+visited = [[[0,0,0,0] for _ in range(M)] for _ in range(N)]
 print(bfs(sx,sy,sd,ex,ey,ed))
-prin(visited)
