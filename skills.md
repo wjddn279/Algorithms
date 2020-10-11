@@ -85,3 +85,20 @@ def powerset(n,k,step):
     powerset(n,k+1,step)
 ```
 
+## 깨진 블록들 밑으로 정렬
+
+```python
+# M : 너비, N : 높이 , now : 현재 지도
+# 오른쪽으로 한칸씩 가면서
+for j in range(M):
+    # 밑부터 차례대로 
+    for i in range(N-2,-1,-1):
+        for l in range(i,N-1):
+            # 현재 위치에서 한칸 밑과 비교해서 나는 블록이 있고 밑에는 없다면 교체
+            if now[l][j] and not now[l+1][j]:
+                now[l][j],now[l+1][j] = now[l+1][j],now[l][j]
+            # 아니면 그만
+            else:
+                break
+```
+
