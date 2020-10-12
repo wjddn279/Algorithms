@@ -102,3 +102,39 @@ for j in range(M):
                 break
 ```
 
+## 배열 회전 관련 skill
+
+```python
+# 90도 회전 -> 기본적으로 x,y 대칭 
+def rotate():
+    new_matrix = [[0] * len(matrix) for i in range(len(matrix))]
+    for i in range(len(matrix)):
+        for j in range(len(matrix)):
+            new_matrix[j][len(matrix)-i-1] = matrix[i][j]
+    return new_matrix
+
+# 후        전
+# 1 1 1 1   1 2 3 4
+# 2 2 2 2   1 2 3 4 
+# 3 3 3 3   1 2 3 4
+# 4 4 4 4   1 2 3 4 
+
+# 180도 회전
+def rotate():
+    new_matrix = [[0] * len(matrix) for i in range(len(matrix))]
+    for i in range(len(matrix)):
+        for j in range(len(matrix)):
+            new_matrix[len(matrix)-i-1][len(matrix)-j-1] = matrix[i][j]
+    return new_matrix
+
+# 270도 회전
+def rotate():
+    new_matrix = [[0] * len(matrix) for i in range(len(matrix))]
+    for i in range(len(matrix)):
+        for j in range(len(matrix)):
+            new_matrix[len(matrix)-j-1][i] = matrix[i][j]
+    return new_matrix
+```
+
+## 대각선 모양 만들기
+
