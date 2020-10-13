@@ -136,5 +136,41 @@ def rotate():
     return new_matrix
 ```
 
-## 대각선 모양 만들기
+## 한칸씩 회전
+
+```python
+def rotate(x,y,R):
+    # x,y : 중심 R : 회전 반경
+    for r in range(1,R+1):
+        temp = matrix[x-r][y-r]
+        # 위쪽
+        for j in range(y-r,y+r):
+            new = matrix[x-r][j+1]
+            matrix[x-r][j+1] = temp
+            temp = new
+        # 오른쪽
+        for i in range(x-r,x+r):
+            new = matrix[i+1][y+r]
+            matrix[i+1][y+r] = temp
+            temp = new
+        # 아래쪽
+        for j in range(y+r,y-r,-1):
+            new = matrix[x+r][j-1]
+            matrix[x+r][j-1] = temp
+            temp = new
+        # 밑쪽
+        for i in range(x+r,x-r,-1):
+            new = matrix[i-1][y-r]
+            matrix[i-1][y-r] = temp
+            temp = new
+```
+
+## 2차원 배열 복사
+
+```python
+matrix = [[0 for _ in range(M)] for _ in range(N)]
+5
+# deepcopy 보다 빠름
+copy = [i[:] for i in matrix]
+```
 
