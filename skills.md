@@ -174,3 +174,23 @@ matrix = [[0 for _ in range(M)] for _ in range(N)]
 copy = [i[:] for i in matrix]
 ```
 
+## 대각선 모양 만들기
+
+```python
+def radio(x,y,r):
+    # x,y : 중심점 좌표, r : 대각선 길이
+    for idx,i in enumerate(range(x-r,x+r+1)):
+        if idx <= r:
+            for j in range(y-idx,y+idx+1):
+                matrix[i][j] = 1
+        else:
+            for j in range(y-(2*r-idx),y+(2*r-idx)+1):
+                matrix[i][j] = 1
+                
+[0, 0, 1, 0, 0]
+[0, 1, 1, 1, 0]
+[1, 1, 1, 1, 1]
+[0, 1, 1, 1, 0]
+[0, 0, 1, 0, 0]
+```
+
