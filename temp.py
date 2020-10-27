@@ -41,7 +41,31 @@ def QuickSort(arr):
     return QuickSort(post)+equal+QuickSort(prior)
 
 
+def memozation(n):
+    dp[1],dp[2] = 1,1
+    if dp[n]:
+        return dp[n]
+    dp[n] = memozation(n-1)+memozation(n-2)
+    return dp[n]
 
-arr = [7,3,2,9,4]
-print(BubbleSort(arr))
-print(QuickSort(arr))
+def up(n):
+    if n <= 2:
+        return 1
+    dp = [0,1,1]
+    for i in range(3,n+2):
+        dp.append(dp[i-1]+dp[i-2])
+    return dp[n]
+
+print(up(10))
+
+
+
+
+dp = [0 for _ in range(11)]
+print(memozation(10))
+print(dp)
+
+
+# arr = [7,3,2,9,4]
+# print(BubbleSort(arr))
+# print(QuickSort(arr))
