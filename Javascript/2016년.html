@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    
+</body>
+
+<script>
+    function solution(a,b) {
+        // a : 월 , b : 일
+        let last = [31,29,31,30,31,30,31,31,30,31,30,31]
+        let day = ['FRI','SAT','SUN','MON','TUE','WED','THU']
+        let subSum = 0
+        for (let i=0;i<a-1;i++){
+            subSum += last[i]
+        }
+        subSum += b
+        return day[(subSum-1)%7]
+    }
+    console.log(solution(11,1))
+</script>
+</html>
